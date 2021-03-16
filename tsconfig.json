@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "types": ["node", "webdriverio/sync", "@wdio/mocha-framework", "expect-webdriverio"],
+        "target": "es2019",
+        "strict": true,
+        "noImplicitAny": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "outDir": "./.tsbuild/",
+        "strictPropertyInitialization": true,
+        "strictNullChecks": true,
+        "module": "commonjs"
+    },
+    "include": [
+        "./test/**/*.ts",
+        "./src/**/*.ts"
+    ]
+}
