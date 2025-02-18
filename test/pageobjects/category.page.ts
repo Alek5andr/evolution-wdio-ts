@@ -1,48 +1,41 @@
-
-import helper from "../services/helper";
 import logger from "../services/logger";
 import table from "./elements/table";
 import Page from "./page";
 
 class CategoryPage extends Page {
-    private adCheckboxElementSelector: string = 'input[type="checkbox"]';
-    private adTitleAnchorElementSelector: string = 'a[class="am"]';
+    private readonly adTitleAnchorElementSelector: string = 'a[class="am"]';
 
-    get adCheckboxElements() {
-        return table.tableElement.$$(this.adCheckboxElementSelector);
+    get adCheckboxes(): Promise<Array<WebdriverIO.Element>> {
+        return table.tableElement.$$('input[type="checkbox"]');
     }
 
-    selectRandomAds(amount: number = 0): boolean {
-        const elements: Array<WebdriverIO.Element> = this.adCheckboxElements;
+    async selectRandomAds(amount: number = 0): Promise<void> {
+        const elements: Array<WebdriverIO.Element> = await this.adCheckboxes;
         const totalElements: number = elements.length;
 
         logger.info('Selecting random ad');
-        for (let i = 1; i < amount; i++) {
-            super.clickRandomElementFrom0ToExcludingN(elements, totalElements);
+        for (let i: number = 1; i <= amount; i++) {
+            await super.clickRandomElementFrom0ToExcludingN(elements, totalElements);
         }
-
-        return super.clickRandomElementFrom0ToExcludingN(elements, totalElements);
     }
 
-    getSelectedAds(): number {
-        const elements: Array<WebdriverIO.Element> = this.adCheckboxElements;
+    async getSelectedAds(): Promise<number> {
+        const elements: Array<WebdriverIO.Element> = await this.adCheckboxes;
         let counter: number = 0;
 
-        elements.forEach(element => {
-            if (element.isSelected()) counter++;
-        });
+        for(const element of elements) if (await element.isSelected()) counter++;
         return counter;
     }
 
-    openRandomAd(): boolean {
-        const elements = table.tableElement.$$(this.adTitleAnchorElementSelector);
-        const totalElements = elements.length;
-
-        return super.clickRandomElementFrom0ToExcludingN(elements, totalElements);
+    async openRandomAd(): Promise<void> {
+        const elements: ChainablePromiseArray = await (await table.tableElement).$$(this.adTitleAnchorElementSelector);
+        const totalElements: number = elements.length;
+        await super.clickRandomElementFrom0ToExcludingN(elements, totalElements);
     }
 
-    openFirstAd(): boolean {
-        return super.clickElement($(this.adTitleAnchorElementSelector));
+    async openFirstAd(): Promise<void> {
+        logger.info('Opening the most top first ad');
+        await super.clickElement(await $(this.adTitleAnchorElementSelector));
     }
 
 }

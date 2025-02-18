@@ -1,6 +1,4 @@
-const { setSourceMapRange } = require( "typescript" )
-
-exports.config = {
+export const config: WebdriverIO.Config = {
     //
     // ====================
     // Runner Configuration
@@ -9,6 +7,7 @@ exports.config = {
     // WebdriverIO allows it to run your tests in arbitrary locations (e.g. locally or
     // on a remote machine).
     runner: 'local',
+    tsConfigPath: './tsconfig.json',
     //
     // ==================
     // Specify Test Files
@@ -19,17 +18,13 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './test/specs/ss_com_tests/memo/search.ads.and.memorize.first.ts'
+        './test/specs/ss_com_tests/bookmark/*.spec.ts'
     ],
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
     ],
-    suites: {
-        'evolution-sscom': [
-            './test/specs/ss_com_tests/memo/*.ts'
-        ]
-    },
+    suites: {},
     //
     // ============
     // Capabilities
@@ -53,19 +48,7 @@ exports.config = {
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
     capabilities: [{
-    
-        // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-        // grid with only 5 firefox instances available you can make sure that not more than
-        // 5 instances get started at a time.
-        maxInstances: 5,
-        //
-        browserName: 'chrome',
-        acceptInsecureCerts: true,
-        // If outputDir is provided WebdriverIO can capture driver session logs
-        // it is possible to configure which logTypes to include/exclude.
-        // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
-        // excludeDriverLogs: ['bugreport', 'server'],
-        excludeDriverLogs: ['server'],
+        browserName: 'chrome'
     }],
     //
     // ===================
@@ -114,8 +97,8 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['chromedriver'],
-    
+    //services: [],
+
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks
@@ -136,13 +119,7 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec',
-        ['allure', {
-            outputDir: 'allure-results',
-            disableWebdriverStepsReporting: false,
-            }
-        ]
-    ],  
+    reporters: ['spec'],
     //
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
@@ -205,13 +182,13 @@ exports.config = {
      * Hook that gets executed before the suite starts
      * @param {Object} suite suite details
      */
-    beforeSuite: function (suite) {
-        browser.setTimeout({
+    beforeSuite: async function (suite: object) {
+        await browser.setTimeout({
             "implicit": 2000,
             "pageLoad": 10000
         });
-        browser.maximizeWindow();
-        browser.url(this.baseUrl);
+        await browser.maximizeWindow();
+        await browser.url(this.baseUrl);
     },
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
@@ -233,13 +210,13 @@ exports.config = {
     /**
      * Function to be executed after a test (in Mocha/Jasmine).
      */
-    afterTest: function(test, context, { error, result, duration, passed, retries }) {
+    afterTest: async function(test, context, { error, result, duration, passed, retries }) {
         if (!passed) {
-            var today = new Date();
-            var date = today.getFullYear() + "-" +(today.getMonth() + 1) + "-" + today.getDate();
-            var time = today.getHours() + "_" + today.getMinutes() + "_" + today.getSeconds();
-            var dateTime = date + " " + time;
-            browser.saveScreenshot("./error_shots/" + dateTime + ".png");
+            const today = new Date();
+            const date = today.getFullYear() + "-" +(today.getMonth() + 1) + "-" + today.getDate();
+            const time = today.getHours() + "_" + today.getMinutes() + "_" + today.getSeconds();
+            const dateTime = date + " " + time;
+            await browser.saveScreenshot("./error_shots/" + dateTime + ".png");
         }
     },
 

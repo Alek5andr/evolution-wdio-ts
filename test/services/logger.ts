@@ -1,5 +1,5 @@
 import { ILogObject, Logger } from "tslog";
-import { writeFileSync, accessSync }  from "fs";
+import { writeFileSync }  from "fs";
 
 function logDebugToFile(logObject: ILogObject) {
     logToTransport('./logs/debug.log', logObject);

@@ -1,14 +1,8 @@
 import categoryPage from "../pageobjects/category.page";
 
-class Steps {
-    addAdToMemo() {
-        it('Add ad to memo as a favorite', () => {
-            const favouritesBefore: number = categoryPage.getMemorizedAmount();
-            expect(categoryPage.memorizeAds()).toBe(true);
-            expect(categoryPage.isAttentionPopUpVisible()).toBe(true);
-            expect(categoryPage.getMemorizedAmount()).toEqual(favouritesBefore + 1);
-        });
-    }
+export async function adShouldBeBookmarked(): Promise<void> {
+    const favouritesBefore: number = await categoryPage.getMemorizedAmount();
+    await categoryPage.bookmarkAd();
+    await expect(await categoryPage.isAttentionPopUpVisible()).toBe(true);
+    await expect(await categoryPage.getMemorizedAmount()).toEqual(favouritesBefore + 1);
 }
-
-export default new Steps();

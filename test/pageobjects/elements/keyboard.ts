@@ -1,9 +1,9 @@
 import logger from "../../services/logger";
 
 class Keyboard {
-    hitEnter() {
+    async hitEnter(): Promise<void> {
         logger.info('Pressing "Enter" key');
-        browser.keys('\uE007');
+        await browser.keys('\uE007');
     }
 }
 export default new Keyboard();
